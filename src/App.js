@@ -5,9 +5,9 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-      
+      <h1>Welcome to Quizical!</h1>
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          If taking a quiz is quizical, then what is taking a test?.
         </p>
         <a
           className="App-link"
