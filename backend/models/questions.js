@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
-const Scheme = mongoose.Schema;
+const Schema = mongoose.Schema;
 
 const questionSchema = new Schema ({
-    text: {type: String, required: true}.
-    answer: String,
+    text: {type: String, required: true},
+    answer: {type: String},
     choices: {type: [String], required: true}
     });
 
