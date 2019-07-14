@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 
 class CreateQuiz extends React.Component {
 
@@ -7,10 +8,11 @@ class CreateQuiz extends React.Component {
 
         this.onChangeQuizName = this.onChangeQuizName.bind(this);
         this.onChangeQuizDescription = this.onChangeQuizDescription.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
 
         this.state = {
             quiz_name: '',
-            quiz_decription: '',
+            quiz_description: '',
         }
     }
 
@@ -32,10 +34,16 @@ class CreateQuiz extends React.Component {
             console.log(`Quiz Name ${this.state.quiz_name}`);
             console.log(`Quiz Description ${this.state.quiz_description}`);
             
+            const newQuiz = {
+                description: this.state.quiz_description,
+                name: this.state.quiz_name
+            }
+
+            axios.post('http://localhost:3001/quiz/add', newQuiz).then(res => console.log(res.data));
 
             this.setState({
                 quiz_name: '',
-                quiz_decription: '',
+                quiz_description: '',
             })
         }
 
@@ -43,7 +51,7 @@ class CreateQuiz extends React.Component {
         return (
             <div style={{margin: 20}}>
                 <h3>Create new Quiz</h3>                
-                <form onSubmit="{this.onSubmit"> 
+                <form onSubmit={this.onSubmit}> 
                     <div className="form-group">
                         <label>Name:</label>
                         <input type="text" className="form-control" value={this.state.todo_name} onChange={this.onChangeQuizName}/>
