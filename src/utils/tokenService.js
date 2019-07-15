@@ -1,12 +1,4 @@
-function setToken(token) {
-    if (token) {
-        localStorage.setItem('token', token);
-    } else {
-        localStorage.removeItem('token');
-    }
-}
-
-function getToken() {
+export const getToken = () => {
     let token = localStorage.getItem('token');
     if (token) {
         // Check if expired, remove if it is
@@ -20,18 +12,10 @@ function getToken() {
     return token;
 }
 
-function getUserFromToken() {
+export const setToken = (token) => localStorage.setItem('token', token);;
+export const removeToken = () => localStorage.removeItem('token');
+
+export const getUserFromToken = () => {
     const token = getToken();
     return token ? JSON.parse(atob(token.split('.')[1])).user : null;
 }
-
-function removeToken() {
-    localStorage.removeItem('token');
-}
-
-export default {
-    setToken,
-    getToken,
-    removeToken,
-    getUserFromToken
-};
