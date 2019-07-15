@@ -15,6 +15,12 @@ import QuizList from '../../components/Quiz/QuizList';
 
 
 class App extends Component {
+  constructor(){
+    super();
+    this.state = {
+      user: userService.getUser()
+    };
+  }
 
   handleLogout = () => {
     userService.logout();
@@ -28,19 +34,7 @@ class App extends Component {
   render(){
     return (   
       <Router>
-      <nav className="navbar navbar-expand-lg navbar-light bg-light"> 
-        <Link to ='/' className='navbar-brand'>Quzzical</Link>
-        <div className="collapse navbar-collapse">
-          <ul className="navbar-nav mr-auto">
-            <li className="navbar-item">
-             <Link to='/' className="nav-Link">Quiz's</Link>
-            </li>
-            <li className="navbar-item">
-             <Link to='/create' className="nav-Link">Create Quiz</Link>
-            </li>
-          </ul>
-        </div>
-      </nav>
+ 
       
       <Switch>
 
