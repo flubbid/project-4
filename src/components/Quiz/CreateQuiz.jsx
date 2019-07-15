@@ -1,9 +1,11 @@
-import React, { Component } from 'react';
-import axios from 'axios';
+import React from 'react';
+import { connect } from 'react-redux';
+import { createQuiz, updateQuiz } from '../../store/actions';
+import history from '../../utils/history';
 
 class CreateQuiz extends React.Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
 
         this.onChangeQuizName = this.onChangeQuizName.bind(this);
@@ -16,52 +18,70 @@ class CreateQuiz extends React.Component {
         }
     }
 
-        onChangeQuizName(e){
-            this.setState({
-                quiz_name: e.target.value
-            })
-        }
-        onChangeQuizDescription(e){
-            this.setState({
-                quiz_description: e.target.value
-            })
-        }
+    componentDidMount() {
 
-        onSubmit(e){
-            e.preventDefault();
+        if (this.props.match.params && this.props.match.params.id) {
+            if (this.props.location.state) {
+                this.setState({
+                    editId: this.props.match.params.id,
+                    quiz_name: this.props.location.state.name,
+                    quiz_description: this.props.location.state.description,
+                })
+            } else {
+                history.replace('/create');
+            }
+        }
+    }
 
-            console.log('Form Submitted')
-            console.log(`Quiz Name ${this.state.quiz_name}`);
-            console.log(`Quiz Description ${this.state.quiz_description}`);
-            
-            const newQuiz = {
+    onChangeQuizName(e) {
+        this.setState({
+            quiz_name: e.target.value
+        })
+    }
+    onChangeQuizDescription(e) {
+        this.setState({
+            quiz_description: e.target.value
+        })
+    }
+
+    onSubmit(e) {
+        e.preventDefault();
+
+        if (this.state.editId) {
+            this.props.updateQuiz(this.state.editId, {
                 description: this.state.quiz_description,
                 name: this.state.quiz_name
-            }
-
-            axios.post('http://localhost:3001/quiz/add', newQuiz).then(res => console.log(res.data));
-
-            this.setState({
-                quiz_name: '',
-                quiz_description: '',
             })
+        } else {
+            this.props.createQuiz({
+                description: this.state.quiz_description,
+                name: this.state.quiz_name
+            });
         }
+
+        this.setState({
+            quiz_name: '',
+            quiz_description: '',
+        })
+
+        history.push('/');
+    }
 
     render() {
         return (
-            <div style={{margin: 20}}>
-                <h3>Create new Quiz</h3>                
-                <form onSubmit={this.onSubmit}> 
+            <div style={{ margin: 20 }}>
+                <h3>Create new Quiz</h3>
+                <form onSubmit={this.onSubmit}>
                     <div className="form-group">
                         <label>Name:</label>
-                        <input type="text" className="form-control" value={this.state.todo_name} onChange={this.onChangeQuizName}/>
+                        <input type="text" className="form-control" value={this.state.quiz_name} onChange={this.onChangeQuizName} />
                     </div>
                     <div className="form-group">
                         <label>Description:</label>
-                        <input type="text" className="form-control" value={this.state.todo_description} onChange={this.onChangeQuizDescription}/>
+                        <input type="text" className="form-control" value={this.state.quiz_description} onChange={this.onChangeQuizDescription} />
                     </div>
                     <div className="form-group">
-                    <input type="submit" value="Create Quiz" className="btn btn-primary"/>
+                        <button type="submit" className="btn btn-primary">{this.state.editId ? 'Save Quiz' : 'Create Quiz'}</button>
                     </div>
                 </form>
             </div>
@@ -70,4 +90,10 @@ class CreateQuiz extends React.Component {
 
 }
 
-export default CreateQuiz;
+const mapStateToProps = (state) => {
+    return {
+        user: state.user
+    };
+}
+
+export default connect(mapStateToProps, { createQuiz, updateQuiz })(CreateQuiz);
