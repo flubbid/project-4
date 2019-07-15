@@ -1,65 +1,57 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import './App.css';
-import {Route, Switch, Redirect, BrowserRouter as Router, Link} from 'react-router-dom';
+import { Route, Switch, Router } from 'react-router-dom';
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import SignupPage from '../SignupPage/SignupPage';
 import LoginPage from '../LoginPage/LoginPage';
-import userService from '../../utils/userService';
-import tokenService from '../../utils/tokenService';
 
 
 import CreateQuiz from '../../components/Quiz/CreateQuiz';
-import EditQuiz from '../../components/Quiz/EditQuiz';
 import QuizList from '../../components/Quiz/QuizList';
 
 
+import { Provider } from 'react-redux';
+import reducer from '../../store/reducers';
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import history from '../../utils/history';
+import NavBar from '../../components/NavBar/NavBar';
+
+const store = createStore(reducer, applyMiddleware(thunk));
+
+const AppRoute = ({ component: Component, ...rest }) => (
+  <Route {...rest} render={matchProps => (
+    <div>
+      <NavBar />
+      <main>
+        <div className="container pt-4">
+          <Component {...matchProps} />
+        </div>
+      </main>
+    </div>
+  )} />
+)
+
 class App extends Component {
-  constructor(){
-    super();
-    this.state = {
-      user: userService.getUser()
-    };
-  }
+  render() {
+    return (
+      <Provider store={store}>
+        <Router history={history}>
+          <Switch>
 
-  handleLogout = () => {
-    userService.logout();
-    this.setState({ user: null });
-  }
-
-  handleSignupOrLogin = () => {
-    this.setState({ user: userService.getUser() });
-  }
-
-  render(){
-    return (   
-      <Router>
- 
-      
-      <Switch>
-
-      <Route path ='/' exact component={QuizList} />
-      <Route path ='/edit/:id' component={EditQuiz} />
-      <Route path ='/create' component={CreateQuiz} />
-      <Route exact path='/signup' render={({ history }) =>
-        <SignupPage
-          history={history}
-          handleSignupOrLogin={this.handleSignupOrLogin}
-        />
-      } />
-        <Route exact path='/login' render={({ history }) =>
-          <LoginPage
-            history={history}
-            handleSignupOrLogin={this.handleSignupOrLogin}
-          />
-        } />  
-    </Switch></Router>
+            <AppRoute path='/' exact component={QuizList} />
+            <AppRoute path='/edit/:id' exact component={CreateQuiz} />
+            <AppRoute path='/login' exact component={LoginPage} />
+            <AppRoute path='/create' component={CreateQuiz} />
+            <Route exact path='/signup' render={({ history }) =>
+              <SignupPage
+                history={history}
+              />
+            } />
+          </Switch></Router>
+      </Provider>
     )
   }
 }
-    
-
-  
- 
-
 export default App;
