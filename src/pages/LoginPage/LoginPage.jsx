@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import './LoginPage.css';
-import userService from '../../utils/userService';
+import { connect } from 'react-redux';
+import { login } from '../../store/actions';
+
+import history from '../../utils/history';
 
 class LoginPage extends Component {
 
@@ -17,25 +20,27 @@ class LoginPage extends Component {
         });
     }
 
-    handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            await userService.login(this.state);
-            // Let <App> know a user has signed up!
-            this.props.handleSignupOrLogin();
-            // Successfully signed up - show GamePage
-            this.props.history.push('/');
-        } catch (err) {
-            // Use a modal or toast in your apps instead of alert
-            alert('Invalid Credentials!');
-        }
+    handleSubmit() {
+        this.props.login(this.state);
     }
 
     render() {
         return (
             <div className="LoginPage">
+                {
+                    !!this.props.error && (
+                        <div className="alert alert-danger">
+                            {this.props.error}
+                        </div>
+                    )
+                }
                 <header className="header-footer">Log In</header>
-                <form className="form-horizontal" onSubmit={this.handleSubmit} >
+                <form
+                    className="form-horizontal"
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        this.handleSubmit()
+                    }} >
                     <div className="form-group">
                         <div className="col-sm-12">
                             <input type="email" className="form-control" placeholder="Email" value={this.state.email} name="email" onChange={this.handleChange} />
@@ -58,4 +63,21 @@ class LoginPage extends Component {
     }
 }
 
-export default LoginPage;
+const mapStateToProps = (state) => {
+    console.log(state);
+
+    if (state.user) {
+        console.log('redirected');
+
+        history.push('/');
+
+        return {};
+    }
+
+    return {
+        user: state.user,
+        error: state.loginError
+    }
+}
+
+export default connect(mapStateToProps, { login })(LoginPage);
