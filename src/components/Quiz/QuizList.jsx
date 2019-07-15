@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import NavBar from '../NavBar/NavBar'
+
 
 const Quiz = props => (
     <tr>
@@ -37,6 +39,7 @@ class QuizList extends React.Component{
     render(){
         return (
             <div>
+            <NavBar user={this.props.user} handleLogout={this.props.handleLogout}/>
             <h3>Quiz List:</h3>
             <table className="table table-striped" style={{margin: 20}}>
             <thead>
