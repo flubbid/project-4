@@ -2,42 +2,62 @@ const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const SECRET = process.env.SECRET;
 
+module.exports.signup = async (req, res) => {
+    try {
+        if (!req.body.name) {
+            throw Error('Name is required.');
+        }
 
-module.exports = {
-    signup,
-    login
+        if (!req.body.email) {
+            throw Error('Email is required.');
+        }
+
+        if (!req.body.password || !req.body.passwordConf || req.body.password !== req.body.passwordConf) {
+            throw Error('Please enter valid password.');
+        }
+
+        const oldUser = await User.findOne({ email: req.body.email });
+
+        if (oldUser) {
+            throw Error(`This email has already been used.`);
+        }
+
+        const user = await (new User(req.body)).save();
+
+        const token = createJWT(user);
+
+        return res.json({ token });
+
+    } catch ({ message }) {
+        res.status(400).json({ message });
+    }
+}
+
+module.exports.login = async (req, res) => {
+    try {
+        if (!req.body.email) {
+            throw Error('Email is required.');
+        }
+
+        if (!req.body.pw) {
+            throw Error('Password is required.');
+        }
+
+        const user = await User.findOne({ email: req.body.email, password: req.body.pw });
+
+        if (!user) {
+            throw Error('Please enter valid credentials.');
+        }
+
+        const token = createJWT(user);
+
+        return res.json({ token });
+
+    } catch ({ message }) {
+        res.status(400).json({ message });
+    }
 };
 
-
-async function signup(req, res) {
-    const user = new User(req.body);
-    try {
-        await user.save();
-        const token = createJWT(user);
-        res.json({ token });
-    } catch (err) {
-        console.log(err)
-        // Probably a duplicate email
-        res.status(400).json(err);
-    }
-}
-
-async function login(req, res) {
-    try {
-        const user = await User.findOne({ email: req.body.email });
-        if (!user) return res.status(401).json({ err: 'bad credentials' });
-        user.comparePassword(req.body.pw, (err, isMatch) => {
-            if (isMatch) {
-                const token = createJWT(user);
-                res.json({ token });
-            } else {
-                return res.status(401).json({ err: 'bad credentials' });
-            }
-        });
-    } catch (err) {
-        return res.status(401).json(err);
-    }
-}
 
 /*----- Helper Functions -----*/
 
