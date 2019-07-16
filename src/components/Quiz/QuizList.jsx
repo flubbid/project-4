@@ -25,7 +25,7 @@ class QuizList extends React.Component {
                 {
                     this.props.quizzes && this.props.quizzes.length
                         ? (
-                            <table className="table table-striped" style={{ margin: 20 }}>
+                            <table className="table table-striped table-hover">
                                 <thead>
                                     <tr>
                                         <th>Name</th>
@@ -36,7 +36,15 @@ class QuizList extends React.Component {
                                 <tbody>
                                     {
                                         this.props.quizzes.map((v, i) => (
-                                            <tr>
+                                            <tr key={i} onClick={(e) => {
+                                                e.preventDefault();
+
+                                                if (e.target.tagName === 'BUTTON') {
+                                                    return;
+                                                }
+
+                                                history.push(`/edit/${v._id}/questions`)
+                                            }}>
                                                 <td>{v.name}</td>
                                                 <td>{v.description}</td>
                                                 <td className='text-right'>
