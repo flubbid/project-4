@@ -24,7 +24,6 @@ router.post('/', async (req, res) => {
         if (!req.body.description) {
             throw Error('Description is required.');
         }
-
         const quiz = await (new Quiz({ name: req.body.name, description: req.body.description, userId: new ObjectId(req.user._id) })).save();
 
         return res.json(quiz);
