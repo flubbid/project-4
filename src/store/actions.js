@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { removeToken, setToken, getUserFromToken, getToken } from '../utils/tokenService';
 
-const BASE_URL = 'http://localhost:3001/api';
+const BASE_URL = '/api';
 
 const getHeaders = () => {
     const token = getToken();
