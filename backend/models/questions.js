@@ -1,10 +1,16 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const questionSchema = new Schema ({
-    text: {type: String, required: true},
-    answer: {type: String},
-    choices: {type: [String], required: true}
-    });
+const questionSchema = new Schema({
+    quizId: Schema.Types.ObjectId,
+    question: String,
+    answers: [{
+        answer: String,
+        correct: {
+            type: Boolean,
+            default: false
+        }
+    }]
+});
 
 module.exports = mongoose.model('Question', questionSchema);
