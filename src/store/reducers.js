@@ -24,7 +24,8 @@ const store = (state = {}, action) => {
         case 'LOGOUT': {
             return {
                 ...state,
-                user: null
+                user: null,
+                quizzes: null
             }
         }
 
@@ -39,6 +40,21 @@ const store = (state = {}, action) => {
             return {
                 ...state,
                 quizzes: action.data,
+                quizError: null
+            }
+        }
+
+        case 'GET_QUIZ': {
+            if (action.error) {
+                return {
+                    ...state,
+                    quizError: action.error
+                }
+            }
+
+            return {
+                ...state,
+                quiz: action.data,
                 quizError: null
             }
         }

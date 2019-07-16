@@ -7,7 +7,7 @@ import SignupPage from '../SignupPage/SignupPage';
 import LoginPage from '../LoginPage/LoginPage';
 
 
-import CreateQuiz from '../../components/Quiz/CreateQuiz';
+import EditQuiz from '../../components/Quiz/EditQuiz';
 import QuizList from '../../components/Quiz/QuizList';
 
 
@@ -17,6 +17,8 @@ import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import history from '../../utils/history';
 import NavBar from '../../components/NavBar/NavBar';
+import QuizQuestions from '../../components/Quiz/QuizQuestions';
+import Quiz from '../../components/Quiz/Quiz';
 
 const store = createStore(reducer, applyMiddleware(thunk));
 
@@ -39,16 +41,13 @@ class App extends Component {
       <Provider store={store}>
         <Router history={history}>
           <Switch>
-
             <AppRoute path='/' exact component={QuizList} />
-            <AppRoute path='/edit/:id' exact component={CreateQuiz} />
+            <AppRoute path='/quiz/:id' exact component={Quiz} />
+            <AppRoute path='/edit/:id' exact component={EditQuiz} />
+            <AppRoute path='/edit/:id/questions' exact component={QuizQuestions} />
             <AppRoute path='/login' exact component={LoginPage} />
-            <AppRoute path='/create' component={CreateQuiz} />
-            <Route exact path='/signup' render={({ history }) =>
-              <SignupPage
-                history={history}
-              />
-            } />
+            <AppRoute path='/create' component={EditQuiz} />
+            <AppRoute path='/signup' component={SignupPage} />
           </Switch></Router>
       </Provider>
     )
